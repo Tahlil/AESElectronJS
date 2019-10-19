@@ -14,21 +14,21 @@ const createStateMatrix = function(hexList) {
   return matrix;
 }
 
-copyColumn = function(mat, pos, col) {
+const copyColumn = function(mat, pos, col) {
   for (i = 0; i < col.length; i++) {
     mat[i][pos] = col[i];
   }
   return mat;
 }
 
-getColumn = function(matrix, pos) {
+const getColumn = function(matrix, pos) {
   result = [];
   for (i = 0; i < 4; i++)
     result[i] = matrix[i][pos];
   return result;
 }
 
-rotateWord = function(colArray) {
+const rotateWord = function(colArray) {
   let result = [];
   for (i = 0; i < colArray.length-1; i++)
     result[i] = colArray[i+1];
@@ -36,13 +36,43 @@ rotateWord = function(colArray) {
   return result;
 }
 
-subBytesKey = function(colArray) {
+const subBytesKey = function(colArray) {
   result = [];
   for (i = 0; i < colArray.length; i++) {
     let j = arr[i];
     result[i] = (metaData.sbox[j & 0x000000FF] & 0xFF);
   }
   return result;
+}
+
+const xorBytes = function(bytes1, bytes2) {
+  let result = [];
+  for (i = 0; i < bytes1.length; i++)
+    result[i] = (bytes1[i] ^ bytes2[i]);
+  return result;
+}
+
+const xorRcon = function(colArray, index) {
+  colArray[0] = (colArray[0] ^ (metaData.rcon[0][index] & 0xff));
+  return colArray;
+}
+
+const generateKeys = function(firstKey) {
+  let finalKeys = [];
+
+}
+
+const printHexaDecimalArray = function (hexArray) { 
+  for (let j = 0; j < hexArray.length; j++) {
+    process.stdout.write(hexArray[j].toString(16) + " ");
+  }
+  console.log("");
+}
+
+const printHexaDecimalMatrix = function(hexMatrix){
+  for (let i = 0; i < hexMatrix.length; i++) {
+    printHexaDecimalArray(hexMatrix[i]); 
+  }
 }
 
 addRoundKey = function(currentRound) {
@@ -55,20 +85,22 @@ addRoundKey = function(currentRound) {
   // }
 }
 
+let keys;
 const keyHexList = [0x54, 0x68, 0x61, 0x74, 0x73, 0x20, 0x6D, 0x79, 0x20, 0x4B, 0x75, 0x6E, 0x67, 0x20, 0x46, 0x750];
 const plainHexList = [0x54, 0x77, 0x6F, 0x20, 0x4F, 0x6E, 0x65, 0x20, 0x4E, 0x69, 0x6E, 0x65, 0x20, 0x54, 0x77, 0x6F];
 console.log("Test input:");
-console.log(plainHexList);
+printHexaDecimalArray(plainHexList);
 console.log("Test key:");
-console.log(keyHexList);
+printHexaDecimalArray(keyHexList);
 
 let matrixKey = createStateMatrix(keyHexList);
 let matrixInput = createStateMatrix(plainHexList);
 
 console.log("Test 1st key:");
-console.log(matrixKey);
+printHexaDecimalMatrix(matrixKey);
 console.log("Test input:");
-console.log(matrixInput);
-console.log(0x12 ^ 0x23);
+printHexaDecimalMatrix(matrixInput);
+
+
 //matrixKey = copyColumn(matrixKey, 4, [1,2,3,4])
 //console.log(matrixKey);
