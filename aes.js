@@ -32,14 +32,14 @@ const rotateWord = function(colArray) {
   let result = [];
   for (i = 0; i < colArray.length-1; i++)
     result[i] = colArray[i+1];
-  result[result.length-1] = colArray[0];
+  result[colArray.length-1] = colArray[0];
   return result;
 }
 
 const subBytesKey = function(colArray) {
   result = [];
   for (i = 0; i < colArray.length; i++) {
-    let j = arr[i];
+    let j = colArray[i];
     result[i] = (metaData.sbox[j & 0x000000FF] & 0xFF);
   }
   return result;
@@ -58,8 +58,30 @@ const xorRcon = function(colArray, index) {
 }
 
 const generateKeys = function(firstKey) {
-  let finalKeys = [];
+  console.log("First key: ");
+  printHexaDecimalMatrix(firstKey);
+  let finalKeys = firstKey;
+  let rconIndex = 0;
+  for (let i = 4; i < 4*(metaData.numberOfRound+1); i++) {
+    let col = getColumn(finalKeys, i-1);
+    if (i % 4 === 0) {
+      col = rotateWord(col);
+      col = subBytesKey(col);
+      col = xorBytes(col, getColumn(finalKeys, i-4));
+      col = xorRcon(col, rconIndex);
+      rconIndex++;
+    } else {
+      col = xorBytes(col, getColumn(finalKeys, i-4));
+    }
+    //console.log("Iteraion: "+i);
+    // printHexaDecimalArray(col);
+    //console.log(finalKeys);
+    finalKeys = copyColumn(finalKeys, i, col);
+    //console.log(finalKeys);
 
+  }
+  printHexaDecimalMatrix(finalKeys);
+  return finalKeys;
 }
 
 const printHexaDecimalArray = function (hexArray) { 
@@ -86,7 +108,7 @@ addRoundKey = function(currentRound) {
 }
 
 let keys;
-const keyHexList = [0x54, 0x68, 0x61, 0x74, 0x73, 0x20, 0x6D, 0x79, 0x20, 0x4B, 0x75, 0x6E, 0x67, 0x20, 0x46, 0x750];
+const keyHexList = [0x54, 0x73, 0x20, 0x67, 0x68, 0x20, 0x4B, 0x20, 0x61, 0x6D, 0x75, 0x46, 0x74, 0x79, 0x6E, 0x75];
 const plainHexList = [0x54, 0x77, 0x6F, 0x20, 0x4F, 0x6E, 0x65, 0x20, 0x4E, 0x69, 0x6E, 0x65, 0x20, 0x54, 0x77, 0x6F];
 console.log("Test input:");
 printHexaDecimalArray(plainHexList);
@@ -100,7 +122,8 @@ console.log("Test 1st key:");
 printHexaDecimalMatrix(matrixKey);
 console.log("Test input:");
 printHexaDecimalMatrix(matrixInput);
-
+keys = generateKeys(matrixKey);
+//console.log(keys);
 
 //matrixKey = copyColumn(matrixKey, 4, [1,2,3,4])
 //console.log(matrixKey);
