@@ -78,7 +78,6 @@ const generateKeys = function(firstKey) {
     //console.log(finalKeys);
     finalKeys = copyColumn(finalKeys, i, col);
     //console.log(finalKeys);
-
   }
   printHexaDecimalMatrix(finalKeys);
   return finalKeys;
@@ -97,19 +96,31 @@ const printHexaDecimalMatrix = function(hexMatrix){
   }
 }
 
-addRoundKey = function(currentRound) {
-  // byte[] col;
-  // int j = 0;
-  // for (int i = 0; i < 4; i++) {
-  //   col = xorBytes(getColumn(state, i), getColumn(keys, currentRound*4+j));
-  //   columnCopy(state, i, col);
-  //   j++;
-  // }
+addRoundKey = function(currentRound, currentState, keys) {
+  let col, j = 0;
+  for (let i = 0; i < 4; i++) {
+    col = xorBytes(getColumn(currentState, i), getColumn(keys, currentRound*4+j));
+    copyColumn(currentState, i, col);
+    j++;
+  }
+  return currentState;
+}
+
+const encrypt16BytesBlock = function() {
+  
+}
+
+const encrypt = function(plainHexBlock, keys){
+  let currentState = plainHexBlock;
+
+  currentState = addRoundKey(0, currentState, keys);
+  console.log("After round 0:");
+  printHexaDecimalMatrix(currentState);
 }
 
 let keys;
 const keyHexList = [0x54, 0x73, 0x20, 0x67, 0x68, 0x20, 0x4B, 0x20, 0x61, 0x6D, 0x75, 0x46, 0x74, 0x79, 0x6E, 0x75];
-const plainHexList = [0x54, 0x77, 0x6F, 0x20, 0x4F, 0x6E, 0x65, 0x20, 0x4E, 0x69, 0x6E, 0x65, 0x20, 0x54, 0x77, 0x6F];
+const plainHexList = [0x54, 0x4F, 0x4E, 0x20, 0x77, 0x6E, 0x69, 0x54, 0x6F, 0x65, 0x6E, 0x77, 0x20, 0x20, 0x65, 0x6F];
 console.log("Test input:");
 printHexaDecimalArray(plainHexList);
 console.log("Test key:");
@@ -123,7 +134,6 @@ printHexaDecimalMatrix(matrixKey);
 console.log("Test input:");
 printHexaDecimalMatrix(matrixInput);
 keys = generateKeys(matrixKey);
-//console.log(keys);
-
+encrypt(matrixInput, keys);
 //matrixKey = copyColumn(matrixKey, 4, [1,2,3,4])
 //console.log(matrixKey);
