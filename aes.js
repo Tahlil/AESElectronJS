@@ -21,6 +21,30 @@ copyColumn = function(mat, pos, col) {
   return mat;
 }
 
+getColumn = function(matrix, pos) {
+  result = [];
+  for (i = 0; i < 4; i++)
+    result[i] = matrix[i][pos];
+  return result;
+}
+
+rotateWord = function(colArray) {
+  let result = [];
+  for (i = 0; i < colArray.length-1; i++)
+    result[i] = colArray[i+1];
+  result[result.length-1] = colArray[0];
+  return result;
+}
+
+subBytesKey = function(colArray) {
+  result = [];
+  for (i = 0; i < colArray.length; i++) {
+    let j = arr[i];
+    result[i] = (metaData.sbox[j & 0x000000FF] & 0xFF);
+  }
+  return result;
+}
+
 addRoundKey = function(currentRound) {
   // byte[] col;
   // int j = 0;
