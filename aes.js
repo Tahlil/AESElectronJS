@@ -160,7 +160,7 @@ addRoundKey = function(currentRound, currentState, keys) {
   return currentState;
 }
 
-const encrypt16BytesBlock = function(currentState, currentRound) {
+const encrypt16BytesBlock = function(currentState, currentRound, keys) {
   printHexaDecimalMatrix(currentState);
   currentState =  subBytesInput(currentState);
   printHexaDecimalMatrix(currentState)
@@ -168,7 +168,8 @@ const encrypt16BytesBlock = function(currentState, currentRound) {
   printHexaDecimalMatrix(currentState)
   if (currentRound != metaData.numberOfRound)
     currentState = mixColumns(currentState);
-  
+  currentState = addRoundKey(currentRound, currentState, keys)
+  printHexaDecimalMatrix(currentState)
 }
 
 const encrypt = function(plainHexBlock, keys){
@@ -177,7 +178,7 @@ const encrypt = function(plainHexBlock, keys){
   console.log("After round 0:");
   printHexaDecimalMatrix(currentState);
   for (let index = 1; index < metaData.numberOfRound; index++) {
-    currentState = encrypt16BytesBlock(currentState, index);
+    currentState = encrypt16BytesBlock(currentState, index, keys);
     break;
   }
 }
