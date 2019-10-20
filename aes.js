@@ -45,6 +45,16 @@ const subBytesKey = function(colArray) {
   return result;
 }
 
+const subBytesInput = function(currentState) {
+  for (let i = 0; i < 4; i++) {
+    for (let j = 0; j < 4; j++) {
+      let hexaByte = currentState[i][j];
+      currentState[i][j] = (metaData.sbox[hexaByte & 0x000000FF] & 0xFF);
+    }
+  }
+  return currentState;
+}
+
 const xorBytes = function(bytes1, bytes2) {
   let result = [];
   for (i = 0; i < bytes1.length; i++)
@@ -106,16 +116,22 @@ addRoundKey = function(currentRound, currentState, keys) {
   return currentState;
 }
 
-const encrypt16BytesBlock = function() {
-  
+const encrypt16BytesBlock = function(currentState, currentRound) {
+  printHexaDecimalMatrix(currentState);
+  currentState =  subBytesInput(currentState);
+  printHexaDecimalMatrix(currentState)
+  //currentState = 
 }
 
 const encrypt = function(plainHexBlock, keys){
   let currentState = plainHexBlock;
-
   currentState = addRoundKey(0, currentState, keys);
   console.log("After round 0:");
   printHexaDecimalMatrix(currentState);
+  for (let index = 1; index < metaData.numberOfRound; index++) {
+    currentState = encrypt16BytesBlock(currentState, index);
+    break;
+  }
 }
 
 let keys;
