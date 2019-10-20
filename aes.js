@@ -93,6 +93,21 @@ const generateKeys = function(firstKey) {
   return finalKeys;
 }
 
+const shiftRows = function(currentState) {
+  row = [];
+  let shift = 0;
+  for (let i = 0; i < 4; i++) {
+    for (let j = 0; j < 4; j++) {
+      row[j] = currentState[i][j];
+    }
+    for (let j = 0; j < 4; j++) {
+      currentState[i][j] = row[(j+shift) % 4];
+    }
+    shift++;
+  }
+  return currentState;
+}
+
 const printHexaDecimalArray = function (hexArray) { 
   for (let j = 0; j < hexArray.length; j++) {
     process.stdout.write(hexArray[j].toString(16) + " ");
@@ -120,6 +135,9 @@ const encrypt16BytesBlock = function(currentState, currentRound) {
   printHexaDecimalMatrix(currentState);
   currentState =  subBytesInput(currentState);
   printHexaDecimalMatrix(currentState)
+  currentState = shiftRows(currentState);
+  printHexaDecimalMatrix(currentState)
+
   //currentState = 
 }
 
