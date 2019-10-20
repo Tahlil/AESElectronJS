@@ -171,12 +171,63 @@ addRoundKey = function(currentRound, currentState, keys) {
   return currentState;
 }
 
+const subBytesInverse = function(currentState) {
+  for (let i = 0; i < 4; i++) {
+    for (let j = 0; j < 4; j++) {
+      let b = currentState[i][j];
+      currentState[i][j] = (metaData.inverseSbox[b & 0x000000FF] & 0xFF);
+    }
+  }
+  return currentState;
+}
+
+const shiftRowsInverse = function(currentState) {
+  let row = [], shift = 0;
+  for (let i = 0; i < 4; i++) {
+    for (let j = 0; j < 4; j++) {
+      row[(j+shift)%4] = currentState[i][j];
+    }
+    for (let j = 0; j < 4; j++) {
+      currentState[i][j] = row[j];
+    }
+    shift++;
+  }
+  return currentState;
+}
+
+const mixColumnInverse = function(colNum, currentState) {
+  let copyColumn = [];
+  for (let i = 0; i < 4; i++) 
+    copyColumn[i] = currentState[i][colNum];
+  currentState[0][colNum] = (multiply(0xE,copyColumn[0]) ^ multiply(0xB,copyColumn[1]) ^ multiply(0xD, copyColumn[2]) ^ multiply(0x9,copyColumn[3]));
+  currentState[1][colNum] = (multiply(0xE,copyColumn[1]) ^ multiply(0xB,copyColumn[2]) ^ multiply(0xD, copyColumn[3]) ^ multiply(0x9,copyColumn[0]));
+  currentState[2][colNum] = (multiply(0xE,copyColumn[2]) ^ multiply(0xB,copyColumn[3]) ^ multiply(0xD, copyColumn[0]) ^ multiply(0x9,copyColumn[1]));
+  currentState[3][colNum] = (multiply(0xE,copyColumn[3]) ^ multiply(0xB,copyColumn[0]) ^ multiply(0xD, copyColumn[1]) ^ multiply(0x9,copyColumn[2]));  
+  return currentState;
+}
+
+const mixColumnsInverse = function(currentState) {
+  for (let i = 0; i < 4; i++)
+    currentState = mixColumnInverse(i, currentState);
+  return currentState; 
+}
+
 const encrypt16BytesBlock = function(currentState, currentRound, keys) {
   currentState =  subBytesInput(currentState);
   currentState = shiftRows(currentState);
   if (currentRound != metaData.numberOfRound)
     currentState = mixColumns(currentState);
   currentState = addRoundKey(currentRound, currentState, keys)
+  //printHexaDecimalMatrix(currentState)
+  return currentState;
+}
+
+const decrypt16BytesBlock = function(currentState, currentRound, keys) {
+  currentState = subBytesInverse(currentState);
+  currentState = shiftRowsInverse(currentState);
+  currentState = addRoundKey(currentRound, currentState, keys)
+  if (currentRound != 0)
+    currentState = mixColumnsInverse(currentState);
   //printHexaDecimalMatrix(currentState)
   return currentState;
 }
@@ -188,6 +239,17 @@ const encrypt = function(plainHexBlock, keys){
   printHexaDecimalMatrix(currentState);
   for (let index = 1; index <= metaData.numberOfRound; index++) {
     currentState = encrypt16BytesBlock(currentState, index, keys);
+  }
+  console.log("Encrypted: ");
+  printHexaDecimalMatrix(currentState);
+  return currentState; 
+}
+
+const decrypt = function(encryptedHexBlock, keys){
+  let currentState = encryptedHexBlock;
+  currentState = addRoundKey(metaData.numberOfRound, currentState, keys);
+  for (let i = metaData.numberOfRound-1; i > -1; i--) {
+    currentState = decrypt16BytesBlock(currentState, i, keys);
   }
   console.log("Encrypted: ");
   printHexaDecimalMatrix(currentState);
@@ -212,6 +274,9 @@ printHexaDecimalMatrix(matrixInput);
 keys = generateKeys(matrixKey);
 encryptedMatrix = encrypt(matrixInput, keys);
 let finalEncryptedArray = createByteArray(encryptedMatrix);
-printHexaDecimalArray(finalEncryptedArray);
+let decryptedMatrix = decrypt(encryptedMatrix, keys);
+console.log("Decrypted");
+
+printHexaDecimalMatrix(decryptedMatrix);
 //matrixKey = copyColumn(matrixKey, 4, [1,2,3,4])
 //console.log(matrixKey);
