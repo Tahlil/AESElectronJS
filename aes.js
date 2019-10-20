@@ -14,6 +14,17 @@ const createStateMatrix = function(hexList) {
   return matrix;
 }
 
+const createByteArray = function (matrix) {
+  let byteArray = [], byteArrayIndex = 0;
+  for (let i = 0; i < matrix.length; i++) {
+    for (let j = 0; j < matrix[i].length; j++) {
+      byteArray[byteArrayIndex] = matrix[i][j];
+      byteArrayIndex++;
+    }
+  }
+  return byteArray;
+}
+
 const copyColumn = function(mat, pos, col) {
   for (i = 0; i < col.length; i++) {
     mat[i][pos] = col[i];
@@ -161,15 +172,13 @@ addRoundKey = function(currentRound, currentState, keys) {
 }
 
 const encrypt16BytesBlock = function(currentState, currentRound, keys) {
-  printHexaDecimalMatrix(currentState);
   currentState =  subBytesInput(currentState);
-  printHexaDecimalMatrix(currentState)
   currentState = shiftRows(currentState);
-  printHexaDecimalMatrix(currentState)
   if (currentRound != metaData.numberOfRound)
     currentState = mixColumns(currentState);
   currentState = addRoundKey(currentRound, currentState, keys)
-  printHexaDecimalMatrix(currentState)
+  //printHexaDecimalMatrix(currentState)
+  return currentState;
 }
 
 const encrypt = function(plainHexBlock, keys){
@@ -177,10 +186,12 @@ const encrypt = function(plainHexBlock, keys){
   currentState = addRoundKey(0, currentState, keys);
   console.log("After round 0:");
   printHexaDecimalMatrix(currentState);
-  for (let index = 1; index < metaData.numberOfRound; index++) {
+  for (let index = 1; index <= metaData.numberOfRound; index++) {
     currentState = encrypt16BytesBlock(currentState, index, keys);
-    break;
   }
+  console.log("Encrypted: ");
+  printHexaDecimalMatrix(currentState);
+  return currentState; 
 }
 
 let keys;
@@ -199,6 +210,8 @@ printHexaDecimalMatrix(matrixKey);
 console.log("Test input:");
 printHexaDecimalMatrix(matrixInput);
 keys = generateKeys(matrixKey);
-encrypt(matrixInput, keys);
+encryptedMatrix = encrypt(matrixInput, keys);
+let finalEncryptedArray = createByteArray(encryptedMatrix);
+printHexaDecimalArray(finalEncryptedArray);
 //matrixKey = copyColumn(matrixKey, 4, [1,2,3,4])
 //console.log(matrixKey);
