@@ -108,6 +108,35 @@ const shiftRows = function(currentState) {
   return currentState;
 }
 
+const multiply = function (constant, b) { 
+  let inda = (constant < 0) ? (constant + 256) : constant;
+  let indb = (b < 0) ? (b + 256) : b;
+  if (constant != 0 && b != 0) {
+    let index = (metaData.logTable[inda] + metaData.logTable[indb]);
+    let val = (metaData.inverseLogTable[ index % 255 ] );
+    return val;
+  }
+  else 
+    return 0;
+}
+
+const mixColumn =function(colNum, currentState) {
+		colCopy = [];
+		for (let i = 0; i < 4; i++) 
+      colCopy[i] = currentState[i][colNum];
+    currentState[0][colNum] = (multiply(2,colCopy[0]) ^ colCopy[2] ^ colCopy[3] ^ multiply(3,colCopy[1]));
+    currentState[1][colNum] = (multiply(2,colCopy[1]) ^ colCopy[3] ^ colCopy[0] ^ multiply(3,colCopy[2]));
+    currentState[2][colNum] = (multiply(2,colCopy[2]) ^ colCopy[0] ^ colCopy[1] ^ multiply(3,colCopy[3]));
+    currentState[3][colNum] = (multiply(2,colCopy[3]) ^ colCopy[1] ^ colCopy[2] ^ multiply(3,colCopy[0]));
+    return currentState;
+}
+
+mixColumns = function(currentState) {
+  for (let i = 0; i < 4; i++)
+    currentState = mixColumn(i, currentState);
+  return currentState;
+}
+
 const printHexaDecimalArray = function (hexArray) { 
   for (let j = 0; j < hexArray.length; j++) {
     process.stdout.write(hexArray[j].toString(16) + " ");
@@ -137,8 +166,9 @@ const encrypt16BytesBlock = function(currentState, currentRound) {
   printHexaDecimalMatrix(currentState)
   currentState = shiftRows(currentState);
   printHexaDecimalMatrix(currentState)
-
-  //currentState = 
+  if (currentRound != metaData.numberOfRound)
+    currentState = mixColumns(currentState);
+  
 }
 
 const encrypt = function(plainHexBlock, keys){

@@ -56,7 +56,7 @@ logTable = [
   68,  17, 146, 217,  35,  32,  46, 137, 180, 124, 184,  38, 119, 153, 227, 165, 
   103,  74, 237, 222, 197,  49, 254,  24,  13,  99, 140, 128, 192, 247, 112,   7];
 
-inversLogTable = [
+  inverseLogTable = [
   1,   3,   5,  15,  17,  51,  85, 255,  26,  46, 114, 150, 161, 248,  19,  53, 
   95, 225,  56,  72, 216, 115, 149, 164, 247,   2,   6,  10,  30,  34, 102, 170, 
   229,  52,  92, 228,  55,  89, 235,  38, 106, 190, 217, 112, 144, 171, 230,  49, 
@@ -83,7 +83,7 @@ module.exports = {
   sbox: sbox,
   inverseSbox: inverseSbox,
   logTable: logTable,
-  inversLogTable: inversLogTable,
+  inverseLogTable: inverseLogTable,
   rcon: rcon,
   numberOfRound: 10
 }
