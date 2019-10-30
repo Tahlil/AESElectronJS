@@ -59,6 +59,8 @@ function writeFile() {
   console.log("Before padding number of bytes: "  + fileData.length);
   fileData = addPadding(fileData);
   console.log("After padding number of bytes: "  + fileData.length);
+  fileData = fileData.map(hexStr => parseInt(hexStr, 'hex'));
+  fileData = doEncryption ? encryptPaddedByBlocks(fileData) : decryptPaddedByBlocks(fileData);
   var inputId = doEncryption ? "enc" : "dec" ;
   var fileName = $('#'+inputId+'FileName').val();
   var fileDirectory = "../";
@@ -70,7 +72,7 @@ function writeFile() {
 ipcRenderer.on("file-written", (event, res) => {
   var labalId = doEncryption ? "enc-success" : "dec-success";
   var label = doEncryption ? "Encryption" : "Decryption";
-  $("#" + res.id).html(`
+  $("#" + labalId).html(`
     <h5 class="badge badge-success" >
       ${label} Successful
     </h5>

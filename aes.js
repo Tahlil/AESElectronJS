@@ -257,31 +257,69 @@ const decryptBlock = function(encryptedHexBlock, keys){
 }
 
 let keys;
-const keyHexList = [0x54, 0x73, 0x20, 0x67, 0x68, 0x20, 0x4B, 0x20, 0x61, 0x6D, 0x75, 0x46, 0x74, 0x79, 0x6E, 0x75];
-const plainHexList = [0x54, 0x4F, 0x4E, 0x20, 0x77, 0x6E, 0x69, 0x54, 0x6F, 0x65, 0x6E, 0x77, 0x20, 0x20, 0x65, 0x6F];
-console.log("Test input:");
-printHexaDecimalArray(plainHexList);
-//console.log("Test key:");
-//printHexaDecimalArray(keyHexList);
 
-let matrixKey = createStateMatrix(keyHexList);
-let matrixInput = createStateMatrix(plainHexList);
+const getKeyMatrix = function(){
+  const keyHexList = [0x54, 0x73, 0x20, 0x67, 0x68, 0x20, 0x4B, 0x20, 0x61, 0x6D, 0x75, 0x46, 0x74, 0x79, 0x6E, 0x75];  
+  return createStateMatrix(keyHexList);
+}
 
-//console.log("Test 1st key:");
-//printHexaDecimalMatrix(matrixKey);
+// const plainHexList = [0x54, 0x4F, 0x4E, 0x20, 0x77, 0x6E, 0x69, 0x54, 0x6F, 0x65, 0x6E, 0x77, 0x20, 0x20, 0x65, 0x6F];
+// console.log("Test input:");
+// printHexaDecimalArray(plainHexList);
+// //console.log("Test key:");
+// //printHexaDecimalArray(keyHexList);
+var encryptPaddedByBlocks = function(paddedBytes){
+  var matrixKey = getKeyMatrix();
+  var keys = generateKeys(matrixKey);
+  let tempBlock = [], encryptedBlock = [];
+  for (let index = 0; index < paddedBytes.length; index++) {
+    var byte = paddedBytes[index];
+    tempBlock.push(byte);
+    if(tempBlock.length === 16){
+      var matrixInput = createStateMatrix(tempBlock);   
+      var encryptedMatrix = encryptBlock(matrixInput, keys);
+      var finalEncryptedArray = createByteArray(encryptedMatrix);
+      encryptedBlock= [...encryptedBlock, ...finalEncryptedArray]
+      tempBlock = [];
+    }
+  }
+  return encryptedBlock;
+}
 
-console.log("Test input:");
-printHexaDecimalMatrix(matrixInput);
-keys = generateKeys(matrixKey);
-encryptedMatrix = encryptBlock(matrixInput, keys);
+var decryptPaddedByBlocks = function(paddedBytes){
+  var matrixKey = getKeyMatrix();
+  var keys = generateKeys(matrixKey);
+  let tempBlock = [], decryptedBlock = [];
+  for (let index = 0; index < paddedBytes.length; index++) {
+    var byte = paddedBytes[index];
+    tempBlock.push(byte);
+    if(tempBlock.length === 16){
+      var encryptedMatrix = createStateMatrix(tempBlock);   
+      var decryptedMatrix = decryptBlock(encryptedMatrix, keys);
+      var finalDecryptedArray = createByteArray(decryptedMatrix);
+      decryptedBlock= [...decryptedBlock, ...finalDecryptedArray]
+      tempBlock = [];
+    }
+  }
+  return decryptedBlock;
+}
+// let matrixInput = createStateMatrix(plainHexList);
 
-console.log("Encrypted: ");
-printHexaDecimalMatrix(encryptedMatrix);
+// //console.log("Test 1st key:");
+// //printHexaDecimalMatrix(matrixKey);
 
-let finalEncryptedArray = createByteArray(encryptedMatrix);
-let decryptedMatrix = decryptBlock(encryptedMatrix, keys);
-console.log("Decrypted");
-printHexaDecimalMatrix(decryptedMatrix);
+// console.log("Test input:");
+// printHexaDecimalMatrix(matrixInput);
+// keys = generateKeys(matrixKey);
+// encryptedMatrix = encryptBlock(matrixInput, keys);
+
+// console.log("Encrypted: ");
+// printHexaDecimalMatrix(encryptedMatrix);
+
+// let finalEncryptedArray = createByteArray(encryptedMatrix);
+// let decryptedMatrix = decryptBlock(encryptedMatrix, keys);
+// console.log("Decrypted");
+//printHexaDecimalMatrix(decryptedMatrix);
 
 //matrixKey = copyColumn(matrixKey, 4, [1,2,3,4])
 //console.log(matrixKey);
