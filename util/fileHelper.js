@@ -54,13 +54,16 @@ function decrypt(){
   doEncryption = false;
 }
 
-function writeFile() {
+function writeFile() {  
   var fileData = doEncryption ? fileToBeEncrypted : fileToBeDecrypted;
+  console.log("Before padding number of bytes: "  + fileData.length);
+  fileData = addPadding(fileData);
+  console.log("After padding number of bytes: "  + fileData.length);
   var inputId = doEncryption ? "enc" : "dec" ;
   var fileName = $('#'+inputId+'FileName').val();
   var fileDirectory = "../";
   fileName = (fileName === "" || fileName === undefined) ? "default" : fileName;
-  console.log("File name: " +  fileName);
+  //console.log("File name: " +  fileName);
   ipcRenderer.send("file-write", {fileName: fileName, fileDirectory: fileDirectory, fileData: fileData});  
 }
 
