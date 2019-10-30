@@ -232,7 +232,7 @@ const decrypt16BytesBlock = function(currentState, currentRound, keys) {
   return currentState;
 }
 
-const encrypt = function(plainHexBlock, keys){
+const encryptBlock = function(plainHexBlock, keys){
   let currentState = plainHexBlock;
   currentState = addRoundKey(0, currentState, keys);
   //console.log("After round 0:");
@@ -245,7 +245,7 @@ const encrypt = function(plainHexBlock, keys){
   return currentState; 
 }
 
-const decrypt = function(encryptedHexBlock, keys){
+const decryptBlock = function(encryptedHexBlock, keys){
   let currentState = encryptedHexBlock;
   currentState = addRoundKey(metaData.numberOfRound, currentState, keys);
   for (let i = metaData.numberOfRound-1; i > -1; i--) {
@@ -273,13 +273,13 @@ let matrixInput = createStateMatrix(plainHexList);
 console.log("Test input:");
 printHexaDecimalMatrix(matrixInput);
 keys = generateKeys(matrixKey);
-encryptedMatrix = encrypt(matrixInput, keys);
+encryptedMatrix = encryptBlock(matrixInput, keys);
 
 console.log("Encrypted: ");
 printHexaDecimalMatrix(encryptedMatrix);
 
 let finalEncryptedArray = createByteArray(encryptedMatrix);
-let decryptedMatrix = decrypt(encryptedMatrix, keys);
+let decryptedMatrix = decryptBlock(encryptedMatrix, keys);
 console.log("Decrypted");
 printHexaDecimalMatrix(decryptedMatrix);
 

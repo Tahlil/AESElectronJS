@@ -1,6 +1,7 @@
 // Modules to control application life and create native browser window
 const { globalShortcut, app, BrowserWindow } = require('electron');
 const { ipcMain } = require('electron')
+const fileHelper = require('./util/fileElectron');
 const path = require('path')
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -58,22 +59,29 @@ class DesktopApp {
 
     }
 
-
-    setUpDecListener(){
-      this.ipcMain.on('decrypt', (event, _) => {
-        event.sender.send('asynchronous-reply', {});
+    setUpFileWriteListener(){
+      this.ipcMain.on('file-write', (event, data) => {
+        fileHelper.writeHexByteFile(data.fileData, data.fileName, data.fileDirectory);
+        event.sender.send('file-written', {newFileName: data.fileName});
       })
     }
 
-    setUpEncListener(){
-      ipcMain.on('encrypt', (event, data) => {
-        event.sender.send('end-encrypt', {});
-      }) 
+    setUpFileListener(){
+      ipcMain.on('get-bytes', (event, data) => {
+        let btnName = data.encrypt ? "encrypt" : "decrypt";
+        let id = data.encrypt ? "en-ui" : "de-ui";
+        let byteArray = fileHelper.getHexByteArray(data.path);
+        event.sender.send('got-bytes', {
+          btnName: btnName,
+          id: id,
+          byteArray: byteArray
+        });
+      }); 
     }
 
     setUpAllListener() {
-      this.setUpEncListener();
-      this.setUpDecListener();
+      this.setUpFileListener();
+      this.setUpFileWriteListener();
     }
 }
 

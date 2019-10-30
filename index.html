@@ -49,16 +49,73 @@
         </ul>
       </div>
     </div>
-  </nav> 
-  <div id="en-ui">
-    
+  </nav>
+  <div class="container">
+    <div id="en-ui">
+      
+      <div id="enc-success">
+
+      </div>
+    </div>
+    <hr>
+    <div id="de-ui">
+      
+      <div id="dec-success">
+
+      </div>
+    </div>
   </div>
-  <hr>
-  <div id="de-ui">
-    
+<!-- The Modal -->
+<div class="modal" id="encModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Encrypted File Name:</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <!-- Modal body -->
+      <div class="modal-body">
+        <label for="encFileName">Save encrypted file as: </label>
+        <input id="encFileName" name="encFileName" type="text">
+      </div>
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" onclick="writeFile()" data-dismiss="modal">Encrypt</button>
+      </div>
+    </div>
   </div>
+</div> 
+
+<!-- The Modal -->
+<div class="modal" id="decModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h4 class="modal-title">Decrypted File Name:</h4>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        <!-- Modal body -->
+        <div class="modal-body">
+          <label for="decFileName">Save decrypted file as: </label>
+          <input id="decFileName" name="decFileName" type="text">
+        </div>
+        <!-- Modal footer -->
+        <div class="modal-footer">
+          <button type="button" class="btn btn-success" onclick="writeFile()" data-dismiss="modal">Decrypt</button>
+        </div>
+      </div>
+    </div>
+  </div> 
+  
+  <script>
+    const { ipcRenderer } = require("electron");
+    // ipcRenderer.on("asynchronous-reply", (event, res) => {
+  </script>
     <!-- You can also require other files to run in this process -->
     <script src="./renderer.js"></script>
+    <!-- <script src="./aes.js"></script> -->
     <script src="./util/fileHelper.js"></script>
 
   </body>
