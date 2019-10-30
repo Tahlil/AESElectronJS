@@ -46,7 +46,7 @@ ipcRenderer.on("got-bytes", (event, res) => {
           <button class="btn btn-info p-3" data-toggle="modal" data-target="#${modalID}Modal" onClick="${res.btnName}()">${res.btnName.toUpperCase()}</button>
         </div>
         <div class="col-4 mt-3">
-        Key: <input type="password" value="" id="key${modalID}"> <br>
+        Key in ascii(8 characters): <input type="password" value="" id="key${modalID}"> <br>
         <input type="checkbox" onclick="toggleVis('key${modalID}')">Show Key
         </div>
       </div>
