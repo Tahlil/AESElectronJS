@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="./style/style.css">
     <script>
       let $ = require("jquery");
     </script>
@@ -12,15 +13,53 @@
     <script>
       require("bootstrap");
     </script>
-    <title>Hello World!</title>
+    <title>AES</title>
   </head>
   <body>
-    <h1>Hello World!</h1>
-    We are using Node.js <span id="node-version"></span>, Chromium
-    <span id="chrome-version"></span>, and Electron
-    <span id="electron-version"></span>.
-
+    <nav
+    class="navbar navbar-expand-md navbar-light fixed-top mb-5"
+    id="main-nav"
+  >
+    <div class="container bg-white border border-bottom-2">
+      <a href="#home" class="navbar-brand">
+        <img src="img/aes.jpg" width="177" height="177" alt="" />
+        <h1 class="d-inline align-middle badge badge-dark p-4">AES file encrypter and decrypter</h1>
+      </a>
+      <button
+        class="navbar-toggler"
+        data-toggle="collapse"
+        data-target="#navbarCollapse"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse bg-info w-100" id="navbarCollapse">
+        <ul class="navbar-nav ml-auto p-5">
+          <li class="nav-item mr-2">
+              <div class="upload-btn-wrapper">
+                  <button class="upload-btn">Upload file to encrypt</button>
+                  <input type="file" id="myFileEn" onchange='showEncryptUI(this)'/>
+              </div>
+          </li>
+          <li class="nav-item">
+              <div class="upload-btn-wrapper">
+                  <button class="upload-btn">Upload file to decrypt</button>
+                  <input type="file" id="myFileDe" onchange='showDecryptUI(this)'/>
+              </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav> 
+  <div id="en-ui">
+    
+  </div>
+  <hr>
+  <div id="de-ui">
+    
+  </div>
     <!-- You can also require other files to run in this process -->
     <script src="./renderer.js"></script>
+    <script src="./util/fileHelper.js"></script>
+
   </body>
 </html>

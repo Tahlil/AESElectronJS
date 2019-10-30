@@ -79,8 +79,8 @@ const xorRcon = function(colArray, index) {
 }
 
 const generateKeys = function(firstKey) {
-  console.log("First key: ");
-  printHexaDecimalMatrix(firstKey);
+  //console.log("First key: ");
+  //printHexaDecimalMatrix(firstKey);
   let finalKeys = firstKey;
   let rconIndex = 0;
   for (let i = 4; i < 4*(metaData.numberOfRound+1); i++) {
@@ -100,7 +100,7 @@ const generateKeys = function(firstKey) {
     finalKeys = copyColumn(finalKeys, i, col);
     //console.log(finalKeys);
   }
-  printHexaDecimalMatrix(finalKeys);
+  //printHexaDecimalMatrix(finalKeys);
   return finalKeys;
 }
 
@@ -213,7 +213,7 @@ const mixColumnsInverse = function(currentState) {
 }
 
 const encrypt16BytesBlock = function(currentState, currentRound, keys) {
-  currentState =  subBytesInput(currentState);
+  currentState = subBytesInput(currentState);
   currentState = shiftRows(currentState);
   if (currentRound != metaData.numberOfRound)
     currentState = mixColumns(currentState);
@@ -235,13 +235,13 @@ const decrypt16BytesBlock = function(currentState, currentRound, keys) {
 const encrypt = function(plainHexBlock, keys){
   let currentState = plainHexBlock;
   currentState = addRoundKey(0, currentState, keys);
-  console.log("After round 0:");
-  printHexaDecimalMatrix(currentState);
+  //console.log("After round 0:");
+  //printHexaDecimalMatrix(currentState);
   for (let index = 1; index <= metaData.numberOfRound; index++) {
     currentState = encrypt16BytesBlock(currentState, index, keys);
   }
-  console.log("Encrypted: ");
-  printHexaDecimalMatrix(currentState);
+  //console.log("Encrypted: ");
+  //printHexaDecimalMatrix(currentState);
   return currentState; 
 }
 
@@ -251,8 +251,8 @@ const decrypt = function(encryptedHexBlock, keys){
   for (let i = metaData.numberOfRound-1; i > -1; i--) {
     currentState = decrypt16BytesBlock(currentState, i, keys);
   }
-  console.log("Encrypted: ");
-  printHexaDecimalMatrix(currentState);
+  //console.log("Encrypted: ");
+  //printHexaDecimalMatrix(currentState);
   return currentState; 
 }
 
@@ -261,22 +261,27 @@ const keyHexList = [0x54, 0x73, 0x20, 0x67, 0x68, 0x20, 0x4B, 0x20, 0x61, 0x6D, 
 const plainHexList = [0x54, 0x4F, 0x4E, 0x20, 0x77, 0x6E, 0x69, 0x54, 0x6F, 0x65, 0x6E, 0x77, 0x20, 0x20, 0x65, 0x6F];
 console.log("Test input:");
 printHexaDecimalArray(plainHexList);
-console.log("Test key:");
-printHexaDecimalArray(keyHexList);
+//console.log("Test key:");
+//printHexaDecimalArray(keyHexList);
 
 let matrixKey = createStateMatrix(keyHexList);
 let matrixInput = createStateMatrix(plainHexList);
 
-console.log("Test 1st key:");
-printHexaDecimalMatrix(matrixKey);
+//console.log("Test 1st key:");
+//printHexaDecimalMatrix(matrixKey);
+
 console.log("Test input:");
 printHexaDecimalMatrix(matrixInput);
 keys = generateKeys(matrixKey);
 encryptedMatrix = encrypt(matrixInput, keys);
+
+console.log("Encrypted: ");
+printHexaDecimalMatrix(encryptedMatrix);
+
 let finalEncryptedArray = createByteArray(encryptedMatrix);
 let decryptedMatrix = decrypt(encryptedMatrix, keys);
 console.log("Decrypted");
-
 printHexaDecimalMatrix(decryptedMatrix);
+
 //matrixKey = copyColumn(matrixKey, 4, [1,2,3,4])
 //console.log(matrixKey);
