@@ -21,6 +21,15 @@ function showDecryptUI(elm) {
 
 }
 
+function toggleVis(id) {
+  var x = document.getElementById(id);
+  if (x.type === "password") {
+    x.type = "text";
+  } else {
+    x.type = "password";
+  }
+}
+
 ipcRenderer.on("got-bytes", (event, res) => {
   console.log("Result: ");
   //console.log(res);
@@ -29,12 +38,16 @@ ipcRenderer.on("got-bytes", (event, res) => {
   $("#" + res.id).html(`
   <div class="container">
       <div class="row">
-        <div class="col-5 offset-1">
+        <div class="col-4 offset-1">
           File to decrypt: <h3>${name}</h3>    
           <p class="badge badge-secondary">${path}</p>
         </div>
-        <div class="col-3 offset-3 mt-3">
+        <div class="col-3 mt-3">
           <button class="btn btn-info p-3" data-toggle="modal" data-target="#${modalID}Modal" onClick="${res.btnName}()">${res.btnName.toUpperCase()}</button>
+        </div>
+        <div class="col-4 mt-3">
+        Key: <input type="password" value="" id="key${modalID}"> <br>
+        <input type="checkbox" onclick="toggleVis('key${modalID}')">Show Key
         </div>
       </div>
     </div>
